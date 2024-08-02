@@ -25,28 +25,28 @@ router.post("/register", async (req, res) => {
 
 // Login route
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-      const user = await User.findOne({ username });
-      if (!user) {
-        return res.status(400).send('User not found');
-      }
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(400).send('Invalid password');
-      }
-      const token = jwt.sign({ username, email: user.email ?? '', name: user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      
-      // Log login action
-      const log = new AuthLog({ name: username, action: 'login' });
-      await log.save();
-  
-      res.json({ token, user: { name: user.name ?? '', email: user.email ?? '' } });
-    } catch (err) {
-      res.status(500).send('Server error');
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).send('User not found');
     }
-  });
-  
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).send('Invalid password');
+    }
+    const token = jwt.sign({ username, email: user.email ?? '', name: user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Log login action
+    const log = new AuthLog({ name: username, action: 'login' });
+    await log.save();
+
+    res.json({ token, user: { name: user.name ?? '', email: user.email ?? '' } });
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
 
 // Middleware to authenticate token
 const authenticateToken = (req, res, next) => {
@@ -64,7 +64,7 @@ const authenticateToken = (req, res, next) => {
 
 // Protected route example
 router.get("/protected", authenticateToken, (req, res) => {
-  res.send("This is a protected route");
+  res.send("This is a protected route:" + req.user.username);
 });
 
 // Logout route

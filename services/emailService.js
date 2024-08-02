@@ -4,8 +4,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: 'mail.dikoding.com', // Ganti dengan server SMTP Anda
-  port: 993, // Ganti dengan port SMTP yang sesuai
+  host: 'sandbox.smtp.mailtrap.io', // Ganti dengan server SMTP Anda
+  port: 2525, // Ganti dengan port SMTP yang sesuai
   secure: false, // True untuk port 465, false untuk port 587
   auth: {
     user: process.env.EMAIL_USER,
@@ -13,10 +13,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async (to, subject, text, html) => {
+const sendEmail = async (from, to, subject, text, html) => {
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from,
       to,
       subject,
       text,

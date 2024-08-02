@@ -13,6 +13,10 @@ const emailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  created_by: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     required: true,
